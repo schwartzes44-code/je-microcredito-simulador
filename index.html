@@ -170,37 +170,67 @@ function createSimulationImage(sim){
  canvas.height=1350;
  const ctx=canvas.getContext('2d');
 
+ // Background
  ctx.fillStyle='#0d0d0f';
  ctx.fillRect(0,0,canvas.width,canvas.height);
 
+ // Outer frame
  ctx.strokeStyle='#c7a247';
  ctx.lineWidth=6;
- roundRect(ctx,45,45,990,1260,34);
+ roundRect(ctx,35,35,1010,1280,34);
  ctx.stroke();
 
+ // Header
  ctx.fillStyle='#f5f5f5';
  ctx.font='700 66px Arial';
- ctx.fillText('J.E',90,145);
+ ctx.fillText('J.E',85,135);
  ctx.fillStyle='#c7a247';
- ctx.fillText('Microcrédito',205,145);
+ ctx.fillText('Microcrédito',200,135);
 
  ctx.fillStyle='#f5f5f5';
  ctx.font='700 38px Arial';
- ctx.fillText('SIMULAÇÃO DE CRÉDITO',90,215);
+ ctx.fillText('SIMULAÇÃO DE CRÉDITO',85,205);
 
+ // Credit value card
  ctx.fillStyle='#18181b';
- roundRect(ctx,90,260,900,160,28);
+ roundRect(ctx,85,245,910,150,26);
  ctx.fill();
 
  ctx.fillStyle='#aaaab0';
  ctx.font='28px Arial';
- ctx.fillText('VALOR DO CRÉDITO',130,320);
- ctx.fillStyle='#e4c86f';
- ctx.font='700 64px Arial';
- ctx.fillText(money(sim.principal),130,390);
+ ctx.fillText('VALOR DO CRÉDITO',125,300);
 
- const tableX=90, tableY=470, tableW=900, rowH=82;
- const col=[0,170,430,690,900];
+ ctx.fillStyle='#e4c86f';
+ ctx.font='700 62px Arial';
+ ctx.fillText(money(sim.principal),125,370);
+
+ // Info row
+ const infoY=425, infoH=120;
+ ctx.fillStyle='#151517';
+ roundRect(ctx,85,infoY,910,infoH,24);
+ ctx.fill();
+
+ // dividers
+ ctx.strokeStyle='#3a3a3d';
+ ctx.lineWidth=2;
+ ctx.beginPath(); ctx.moveTo(390,infoY+18); ctx.lineTo(390,infoY+infoH-18); ctx.stroke();
+ ctx.beginPath(); ctx.moveTo(695,infoY+18); ctx.lineTo(695,infoY+infoH-18); ctx.stroke();
+
+ ctx.fillStyle='#aaaab0';
+ ctx.font='22px Arial';
+ ctx.fillText('DATA DO EMPRÉSTIMO',110,465);
+ ctx.fillText('1º VENCIMENTO',420,465);
+ ctx.fillText('CARÊNCIA PARA A 1ª PARCELA',725,465);
+
+ ctx.fillStyle='#e4c86f';
+ ctx.font='700 31px Arial';
+ ctx.fillText(formatDateBR(sim.releaseISO),110,510);
+ ctx.fillText(formatDateBR(sim.firstDueISO),420,510);
+ ctx.fillText(`${sim.grace} DIAS`,725,510);
+
+ // Table
+ const tableX=85, tableY=575, tableW=910, rowH=72;
+ const col=[0,175,435,690,910];
 
  ctx.fillStyle='#c7a247';
  roundRect(ctx,tableX,tableY,tableW,rowH,18);
@@ -210,28 +240,34 @@ function createSimulationImage(sim){
  ctx.font='700 24px Arial';
  ctx.textAlign='center';
  ctx.textBaseline='middle';
+
  const headers=['PRAZO','PARCELA','TOTAL A PAGAR','CUSTO TOTAL'];
  for(let i=0;i<4;i++){
    ctx.fillText(headers[i],tableX+(col[i]+col[i+1])/2,tableY+rowH/2);
  }
 
  ctx.font='700 25px Arial';
+
  for(let r=0;r<sim.terms.length;r++){
    const y=tableY+rowH*(r+1);
-   ctx.fillStyle=r%2===0?'#f2f2f2':'#e8e8e8';
+
+   ctx.fillStyle=r%2===0?'#f3f3f3':'#e8e8e8';
    ctx.fillRect(tableX,y,tableW,rowH);
+
    ctx.strokeStyle='#b8b8b8';
    ctx.lineWidth=1;
    ctx.strokeRect(tableX,y,tableW,rowH);
 
    const t=sim.terms[r];
    const vals=[`${t.n}x`,money(t.installment),money(t.total),money(t.financeCost)];
+
    for(let i=0;i<4;i++){
      ctx.fillStyle='#111';
      ctx.fillText(vals[i],tableX+(col[i]+col[i+1])/2,y+rowH/2);
    }
  }
 
+ // Vertical table lines
  ctx.strokeStyle='#b8b8b8';
  ctx.lineWidth=1;
  for(let i=1;i<4;i++){
@@ -241,16 +277,31 @@ function createSimulationImage(sim){
    ctx.stroke();
  }
 
- const footerY=tableY+rowH*(sim.terms.length+1)+55;
+ // Footer branding
+ const tableBottom=tableY+rowH*(sim.terms.length+1);
+ const footerY=tableBottom+45;
+
  ctx.textAlign='left';
  ctx.textBaseline='alphabetic';
- ctx.fillStyle='#f5f5f5';
- ctx.font='700 32px Arial';
- ctx.fillText('J.E Microcrédito',90,footerY);
 
- ctx.fillStyle='#aaaab0';
- ctx.font='26px Arial';
- ctx.fillText('Simulação comercial sujeita à análise e aprovação.',90,footerY+50);
+ ctx.fillStyle='#f5f5f5';
+ ctx.font='700 30px Arial';
+ ctx.fillText('J.E',85,footerY);
+
+ ctx.fillStyle='#c7a247';
+ ctx.fillText('Microcrédito',145,footerY);
+
+ // Disclaimer highlight bar
+ const barY=footerY+35;
+ ctx.fillStyle='#c7a247';
+ roundRect(ctx,85,barY,910,72,18);
+ ctx.fill();
+
+ ctx.fillStyle='#111';
+ ctx.font='700 26px Arial';
+ ctx.textAlign='center';
+ ctx.textBaseline='middle';
+ ctx.fillText('SIMULAÇÃO COMERCIAL SUJEITA À ANÁLISE E APROVAÇÃO.',540,barY+36);
 
  return canvas;
 }
