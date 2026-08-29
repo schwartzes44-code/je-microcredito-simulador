@@ -2,445 +2,180 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>J.E Microcrédito - Simulador</title>
-  <link rel="manifest" href="./manifest.webmanifest">
+<link rel="manifest" href="./manifest.webmanifest">
 <meta name="theme-color" content="#0d0d0f">
 <style>
-:root{
-  --bg:#0d0d0f; --panel:#18181b; --panel2:#232326; --panel3:#2a2a2e;
-  --gold:#c7a247; --gold2:#e4c86f; --text:#f5f5f5; --muted:#aaaab0;
-  --line:#37373b; --danger:#ff8080; --ok:#8bd39d;
-}
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
-.app{max-width:1120px;margin:auto;padding:18px}
-.brand{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px}
-.brand h1{margin:0;font-size:clamp(25px,5vw,39px);letter-spacing:.2px}
-.brand h1 span{color:var(--gold)}
-.tag{color:var(--muted);font-size:13px;margin-top:6px}
+:root{--bg:#0d0d0f;--panel:#18181b;--panel2:#232326;--gold:#c7a247;--gold2:#e4c86f;--text:#f5f5f5;--muted:#aaaab0;--line:#37373b;--danger:#ff8080;--ok:#8bd39d}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:var(--text)}
+.app{max-width:1120px;margin:auto;padding:18px}.brand{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;margin-bottom:18px}
+.brand h1{margin:0;font-size:clamp(25px,5vw,39px)}.brand h1 span{color:var(--gold)}.tag{color:var(--muted);font-size:13px;margin-top:6px}
 .badge{border:1px solid var(--gold);color:var(--gold2);padding:8px 11px;border-radius:999px;font-size:12px;white-space:nowrap}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
-.section-title{font-size:17px;margin:0 0 14px}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
-.grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
-label{display:block;font-size:13px;color:var(--muted);margin-bottom:7px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}.section-title{font-size:17px;margin:0 0 14px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}label{display:block;font-size:13px;color:var(--muted);margin-bottom:7px}
 input{width:100%;min-height:46px;border-radius:11px;border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:0 12px;font-size:16px;outline:none}
 input:focus{border-color:var(--gold)}
-.fixed{background:#141416;color:#d7d7d9}
-.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}
-button{min-height:46px;border:0;border-radius:11px;padding:0 18px;font-weight:700;font-size:15px;cursor:pointer}
-.primary{background:var(--gold);color:#111}
-.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}
-.danger{background:transparent;color:var(--danger);border:1px solid #6d3838}
+.conditions{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.condition{background:#141416;border:1px solid var(--line);border-radius:11px;padding:10px 12px}.condition .k{display:block;color:var(--muted);font-size:11px;margin-bottom:4px}.condition .v{font-size:13px;font-weight:700}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:15px}button{min-height:46px;border:0;border-radius:11px;padding:0 18px;font-weight:700;font-size:15px;cursor:pointer}
+.primary{background:var(--gold);color:#111}.secondary{background:var(--panel2);color:var(--text);border:1px solid var(--line)}.danger{background:transparent;color:var(--danger);border:1px solid #6d3838}
 .msg{min-height:18px;margin-top:11px;font-size:13px;color:var(--danger)}
-.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}
-.metric{background:var(--panel2);border-radius:13px;padding:13px;min-width:0}
-.metric .k{font-size:12px;color:var(--muted);margin-bottom:6px}
-.metric .v{font-size:18px;font-weight:800;overflow-wrap:anywhere}
-.metric.highlight{border:1px solid var(--gold)}
-.metric.highlight .v{color:var(--gold2)}
-.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:13px}
-table{width:100%;border-collapse:collapse;min-width:620px}
-th,td{padding:12px 12px;border-bottom:1px solid var(--line);font-size:14px;text-align:right}
-tr:last-child td{border-bottom:0}
-th{color:var(--gold2);font-size:12px;background:#151517}
-th:first-child,td:first-child{text-align:left}
-td strong{color:var(--gold2)}
-.note{font-size:12px;line-height:1.55;color:var(--muted);margin:12px 0 0}
-.compare-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:13px}
-.empty{text-align:center;color:var(--muted);padding:24px 6px}
-.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
-.chip{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:7px 9px 7px 12px;font-size:13px}
-.chip b{color:var(--gold2)}
-.chip button{min-height:28px;height:28px;padding:0 9px;font-size:12px;border-radius:999px;background:var(--panel3);color:var(--text)}
-.best{background:rgba(199,162,71,.08)}
-.footer{text-align:center;color:#73737a;font-size:11px;padding:8px 0 22px}
-.small{font-size:11px;color:var(--muted)}
-@media(max-width:760px){
-  .grid{grid-template-columns:1fr 1fr}
-  .grid4,.summary{grid-template-columns:1fr 1fr}
-}
+.summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:14px}.metric{background:var(--panel2);border-radius:13px;padding:13px}.metric .k{font-size:12px;color:var(--muted);margin-bottom:6px}.metric .v{font-size:18px;font-weight:800}.metric.highlight{border:1px solid var(--gold)}.metric.highlight .v{color:var(--gold2)}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:13px}table{width:100%;border-collapse:collapse;min-width:760px}th,td{padding:12px;border-bottom:1px solid var(--line);font-size:14px;text-align:right}tr:last-child td{border-bottom:0}th{color:var(--gold2);font-size:12px;background:#151517}th:first-child,td:first-child{text-align:left}td strong{color:var(--gold2)}
+.share{min-height:34px;height:34px;padding:0 10px;font-size:12px;background:var(--gold);color:#111}
+.result-cards{display:none}.result-card{background:var(--panel2);border:1px solid var(--line);border-radius:13px;padding:12px;margin-bottom:9px}.result-top{display:flex;justify-content:space-between;gap:10px;align-items:center}.result-term{font-size:18px;font-weight:800;color:var(--gold2)}.result-installment{text-align:right}.result-installment .k{font-size:10px;color:var(--muted)}.result-installment .v{font-size:18px;font-weight:800}.result-meta{display:flex;justify-content:space-between;gap:8px;color:var(--muted);font-size:11px;margin:8px 0}.result-card .share{width:100%;height:38px}
+.note{font-size:12px;line-height:1.5;color:var(--muted);margin:12px 0 0}.compare-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:13px}.empty{text-align:center;color:var(--muted);padding:24px 6px}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}.chip{display:flex;align-items:center;gap:8px;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:7px 9px 7px 12px;font-size:13px}.chip b{color:var(--gold2)}.chip button{min-height:28px;height:28px;padding:0 9px;font-size:12px;border-radius:999px;background:#2a2a2e;color:var(--text)}.best{background:rgba(199,162,71,.08)}.footer{text-align:center;color:#73737a;font-size:11px;padding:8px 0 22px}.small{font-size:11px;color:var(--muted)}
+@media(max-width:760px){.grid{grid-template-columns:1fr 1fr}.conditions,.summary{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){
-  .app{padding:13px}
-  .brand{flex-direction:column}
-  .grid,.grid4,.summary{grid-template-columns:1fr}
-  .card{padding:14px}
-  button{width:100%}
-  .chip button{width:auto}
+ .app{padding:10px}.brand{flex-direction:column;gap:8px;margin-bottom:12px}.brand h1{font-size:30px;line-height:1.05}.tag{font-size:11px;line-height:1.35;margin-top:5px}.badge{padding:6px 10px;font-size:11px}
+ .card{padding:12px;border-radius:15px;margin-bottom:10px}.section-title{font-size:16px;margin-bottom:11px}.grid{grid-template-columns:1fr;gap:10px}label{font-size:12px;margin-bottom:5px}input{min-height:48px}
+ .conditions{grid-template-columns:1fr 1fr;gap:7px;margin-top:10px}.condition{padding:8px 9px}.condition .k{font-size:10px}.condition .v{font-size:12px}
+ .actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:11px}.actions .primary{grid-column:1/-1}.actions button{width:100%;min-height:44px;padding:0 10px;font-size:13px}
+ .summary{grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}.metric{padding:9px}.metric .k{font-size:10px;margin-bottom:4px}.metric .v{font-size:14px}
+ .result-table{display:none}.result-cards{display:block}.note{font-size:10px;line-height:1.4}.compare-head .danger{width:100%}.chip button{width:auto}
 }
 </style>
 </head>
 <body>
 <main class="app">
-  <header class="brand">
-    <div>
-      <h1>J.E <span>Microcrédito</span></h1>
-      <div class="tag">Simulador comercial • cálculo por fluxo financeiro e dias reais</div>
-    </div>
-    <div class="badge">3,98% a.m. + ADM 3%</div>
-  </header>
+<header class="brand">
+  <div><h1>J.E <span>Microcrédito</span></h1><div class="tag">Simulador comercial • cálculo por fluxo financeiro e dias reais</div></div>
+  <div class="badge">3,98% a.m. + ADM 3%</div>
+</header>
 
-  <section class="card">
-    <h2 class="section-title">Dados da simulação</h2>
-    <form id="form">
-      <div class="grid">
-        <div>
-          <label for="valor">Valor do crédito</label>
-          <input id="valor" inputmode="decimal" placeholder="Ex.: 10.000,00" value="10000">
-        </div>
-        <div>
-          <label for="liberacao">Data da liberação</label>
-          <input id="liberacao" type="date">
-        </div>
-        <div>
-          <label for="vencimento">1º vencimento</label>
-          <input id="vencimento" type="date">
-        </div>
-      </div>
+<section class="card">
+<h2 class="section-title">Dados da simulação</h2>
+<form id="form">
+<div class="grid">
+ <div><label for="valor">Valor do crédito</label><input id="valor" inputmode="decimal" placeholder="Ex.: 10.000,00" value="10000"></div>
+ <div><label for="liberacao">Data da liberação</label><input id="liberacao" type="date"></div>
+ <div><label for="vencimento">1º vencimento</label><input id="vencimento" type="date"></div>
+</div>
+<div class="conditions">
+ <div class="condition"><span class="k">Taxa a.m.</span><span class="v">3,98%</span></div>
+ <div class="condition"><span class="k">Taxa ADM</span><span class="v">3,00%</span></div>
+ <div class="condition"><span class="k">Prazos</span><span class="v">8x a 15x</span></div>
+ <div class="condition"><span class="k">Base temporal</span><span class="v">30 dias</span></div>
+</div>
+<div class="actions">
+ <button class="primary" type="submit">Calcular</button>
+ <button class="secondary" type="button" id="addCompare">Adicionar à comparação</button>
+ <button class="secondary" type="button" id="clearForm">Limpar</button>
+</div>
+<div id="msg" class="msg" aria-live="polite"></div>
+</form>
+</section>
 
-      <div class="grid4" style="margin-top:14px">
-        <div><label>Taxa a.m.</label><input class="fixed" value="3,980000%" disabled></div>
-        <div><label>Taxa ADM</label><input class="fixed" value="3,000000%" disabled></div>
-        <div><label>Prazos</label><input class="fixed" value="8x a 15x" disabled></div>
-        <div><label>Base temporal</label><input class="fixed" value="30 dias" disabled></div>
-      </div>
+<section class="card">
+<h2 class="section-title">Resultado da simulação</h2>
+<div class="summary">
+ <div class="metric highlight"><div class="k">Valor solicitado</div><div class="v" id="sValor">—</div></div>
+ <div class="metric"><div class="k">Taxa ADM (3%)</div><div class="v" id="sAdm">—</div></div>
+ <div class="metric"><div class="k">Base financiada</div><div class="v" id="sBase">—</div></div>
+ <div class="metric"><div class="k">Carência inicial</div><div class="v" id="sCarencia">—</div></div>
+</div>
+<div class="table-wrap result-table">
+<table><thead><tr><th>Parcelas</th><th>Valor da parcela</th><th>Total pago</th><th>Custo financeiro*</th><th>Compartilhar</th></tr></thead><tbody id="resultBody"></tbody></table>
+</div>
+<div id="resultCards" class="result-cards"></div>
+<p class="note">* Custo financeiro = total das parcelas menos a base financiada (crédito + taxa ADM). O cálculo mantém a fórmula validada de 3,98% a.m. com dias corridos e vencimentos mensais reais.</p>
+</section>
 
-      <div class="actions">
-        <button class="primary" type="submit">Calcular</button>
-        <button class="secondary" type="button" id="addCompare">Adicionar à comparação</button>
-        <button class="secondary" type="button" id="clearForm">Limpar</button>
-      </div>
-      <div id="msg" class="msg" aria-live="polite"></div>
-    </form>
-  </section>
-
-  <section class="card">
-    <h2 class="section-title">Resultado da simulação</h2>
-
-    <div class="summary">
-      <div class="metric highlight">
-        <div class="k">Valor solicitado</div><div class="v" id="sValor">—</div>
-      </div>
-      <div class="metric">
-        <div class="k">Taxa ADM (3%)</div><div class="v" id="sAdm">—</div>
-      </div>
-      <div class="metric">
-        <div class="k">Base financiada</div><div class="v" id="sBase">—</div>
-      </div>
-      <div class="metric">
-        <div class="k">Carência inicial</div><div class="v" id="sCarencia">—</div>
-      </div>
-    </div>
-
-    <div class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Parcelas</th>
-            <th>Valor da parcela</th>
-            <th>Total pago</th>
-            <th>Custo financeiro*</th>
-          </tr>
-        </thead>
-        <tbody id="resultBody"></tbody>
-      </table>
-    </div>
-    <p class="note">
-      * Custo financeiro = total das parcelas menos a base financiada (crédito + taxa ADM).
-      O cálculo usa parcelas fixas descontadas pela taxa de 3,98% a.m., com expoente proporcional
-      aos dias corridos desde a liberação. Os vencimentos seguintes são mensais, respeitando o calendário.
-    </p>
-  </section>
-
-  <section class="card">
-    <div class="compare-head">
-      <div>
-        <h2 class="section-title" style="margin:0 0 4px">Comparação de valores</h2>
-        <div class="small">Compare até 4 propostas nas mesmas datas.</div>
-      </div>
-      <button class="danger" type="button" id="clearCompare">Limpar comparação</button>
-    </div>
-
-    <div id="compareChips" class="chips"></div>
-    <div id="compareEmpty" class="empty">Adicione uma simulação para começar a comparação.</div>
-
-    <div class="table-wrap" id="compareWrap" hidden>
-      <table id="compareTable">
-        <thead id="compareHead"></thead>
-        <tbody id="compareBody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <div class="footer">J.E Microcrédito • Simulador para apoio comercial</div>
+<section class="card">
+<div class="compare-head">
+ <div><h2 class="section-title" style="margin:0 0 4px">Comparação de valores</h2><div class="small">Compare até 4 propostas nas mesmas datas.</div></div>
+ <button class="danger" type="button" id="clearCompare">Limpar comparação</button>
+</div>
+<div id="compareChips" class="chips"></div><div id="compareEmpty" class="empty">Adicione uma simulação para começar a comparação.</div>
+<div class="table-wrap" id="compareWrap" hidden><table><thead id="compareHead"></thead><tbody id="compareBody"></tbody></table></div>
+</section>
+<div class="footer">J.E Microcrédito • Simulador para apoio comercial</div>
 </main>
 
 <script>
 (() => {
-  const ROOT_RATE = 0.0398;
-  const ADM = 0.03;
-  const MIN_TERM = 8;
-  const MAX_TERM = 15;
+const ROOT_RATE=0.0398, ADM=0.03, MIN_TERM=8, MAX_TERM=15;
+let current=null, comparisons=[];
+const $=id=>document.getElementById(id);
+const money=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});
 
-  let current = null;
-  let comparisons = [];
-
-  const $ = id => document.getElementById(id);
-
-  const money = n => Number(n).toLocaleString('pt-BR',{
-    style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2
-  });
-
-  function parseMoney(value){
-    let s = String(value || '').trim().replace(/\s/g,'');
-    if(s.includes(',') && s.includes('.')) s = s.replace(/\./g,'').replace(',','.');
-    else if(s.includes(',')) s = s.replace(',','.');
-    const n = Number(s);
-    return Number.isFinite(n) ? n : NaN;
-  }
-
-  function parseISO(s){
-    if(!s) return null;
-    const [y,m,d] = s.split('-').map(Number);
-    if(!y || !m || !d) return null;
-    return {y,m,d};
-  }
-
-  function utcMs(parts){
-    return Date.UTC(parts.y, parts.m - 1, parts.d);
-  }
-
-  function daysBetween(a,b){
-    return Math.round((utcMs(b) - utcMs(a)) / 86400000);
-  }
-
-  function daysInMonth(y,m){
-    return new Date(Date.UTC(y,m,0)).getUTCDate();
-  }
-
-  function addMonthsClamped(base, months){
-    const zero = (base.m - 1) + months;
-    const y = base.y + Math.floor(zero / 12);
-    const m = ((zero % 12) + 12) % 12 + 1;
-    const d = Math.min(base.d, daysInMonth(y,m));
-    return {y,m,d};
-  }
-
-  function isoTodayLocal(){
-    const d = new Date();
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-
-  function addCalendarMonthLocal(date){
-    const y=date.getFullYear(), m=date.getMonth(), day=date.getDate();
-    const targetMonth=m+1;
-    const targetY=y+Math.floor(targetMonth/12);
-    const targetM=((targetMonth%12)+12)%12;
-    const maxDay=new Date(targetY,targetM+1,0).getDate();
-    return new Date(targetY,targetM,Math.min(day,maxDay));
-  }
-
-  function isoLocal(d){
-    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-  }
-
-  function setDefaultDates(){
-    const today = new Date();
-    $('liberacao').value = isoTodayLocal();
-    $('vencimento').value = isoLocal(addCalendarMonthLocal(today));
-  }
-
-  function paymentForTerm(principal, term, release, firstDue){
-    const financed = principal * (1 + ADM);
-    let discountSum = 0;
-
-    for(let k=0;k<term;k++){
-      const due = addMonthsClamped(firstDue, k);
-      const days = daysBetween(release, due);
-      const factor = Math.pow(1 + ROOT_RATE, days / 30);
-      discountSum += 1 / factor;
-    }
-
-    return financed / discountSum;
-  }
-
-  function buildSimulation(){
-    const principal = parseMoney($('valor').value);
-    const release = parseISO($('liberacao').value);
-    const firstDue = parseISO($('vencimento').value);
-    $('msg').textContent = '';
-    $('msg').style.color = '';
-
-    if(!Number.isFinite(principal) || principal <= 0){
-      $('msg').textContent = 'Informe um valor de crédito válido.';
-      return null;
-    }
-    if(!release || !firstDue){
-      $('msg').textContent = 'Informe as datas de liberação e do primeiro vencimento.';
-      return null;
-    }
-
-    const grace = daysBetween(release, firstDue);
-    if(grace <= 0){
-      $('msg').textContent = 'O primeiro vencimento deve ser posterior à liberação.';
-      return null;
-    }
-    if(grace > 180){
-      $('msg').textContent = 'A carência informada é muito longa para esta simulação.';
-      return null;
-    }
-
-    const financed = principal * (1 + ADM);
-    const admValue = principal * ADM;
-    const terms = [];
-
-    for(let n=MIN_TERM;n<=MAX_TERM;n++){
-      const installment = paymentForTerm(principal, n, release, firstDue);
-      const total = installment * n;
-      const financeCost = total - financed;
-      terms.push({n, installment, total, financeCost});
-    }
-
-    return {
-      principal, financed, admValue, release, firstDue, grace,
-      releaseISO:$('liberacao').value, firstDueISO:$('vencimento').value,
-      terms
-    };
-  }
-
-  function renderCurrent(sim){
-    current = sim;
-    $('sValor').textContent = money(sim.principal);
-    $('sAdm').textContent = money(sim.admValue);
-    $('sBase').textContent = money(sim.financed);
-    $('sCarencia').textContent = `${sim.grace} dias`;
-
-    $('resultBody').innerHTML = '';
-    sim.terms.forEach(t => {
-      const tr = document.createElement('tr');
-      tr.innerHTML = `
-        <td>${t.n}x</td>
-        <td><strong>${money(t.installment)}</strong></td>
-        <td>${money(t.total)}</td>
-        <td>${money(t.financeCost)}</td>
-      `;
-      $('resultBody').appendChild(tr);
-    });
-  }
-
-  function calculate(){
-    const sim = buildSimulation();
-    if(!sim) return null;
-    renderCurrent(sim);
-    return sim;
-  }
-
-  function renderComparison(){
-    const chips = $('compareChips');
-    chips.innerHTML = '';
-
-    comparisons.forEach((c,i) => {
-      const chip = document.createElement('div');
-      chip.className = 'chip';
-      chip.innerHTML = `<span>Simulação ${i+1}: <b>${money(c.principal)}</b></span><button type="button" data-i="${i}">×</button>`;
-      chip.querySelector('button').addEventListener('click', () => {
-        comparisons.splice(i,1);
-        renderComparison();
-      });
-      chips.appendChild(chip);
-    });
-
-    $('compareEmpty').hidden = comparisons.length > 0;
-    $('compareWrap').hidden = comparisons.length === 0;
-    if(comparisons.length === 0) return;
-
-    $('compareHead').innerHTML = '';
-    const hr = document.createElement('tr');
-    hr.innerHTML = `<th>Prazo</th>` + comparisons.map((c,i) =>
-      `<th>Sim. ${i+1}<br><span class="small">${money(c.principal)}</span></th>`
-    ).join('');
-    $('compareHead').appendChild(hr);
-
-    $('compareBody').innerHTML = '';
-
-    for(let term=MIN_TERM;term<=MAX_TERM;term++){
-      const values = comparisons.map(c => c.terms.find(t => t.n === term).installment);
-      const min = Math.min(...values);
-      const tr = document.createElement('tr');
-
-      let cells = `<td>${term}x</td>`;
-      values.forEach(v => {
-        const cls = values.length > 1 && Math.abs(v - min) < 0.005 ? 'best' : '';
-        cells += `<td class="${cls}"><strong>${money(v)}</strong></td>`;
-      });
-
-      tr.innerHTML = cells;
-      $('compareBody').appendChild(tr);
-    }
-  }
-
-  $('form').addEventListener('submit', e => {
-    e.preventDefault();
-    calculate();
-  });
-
-  $('addCompare').addEventListener('click', () => {
-    const sim = calculate();
-    if(!sim) return;
-
-    if(comparisons.length >= 4){
-      $('msg').textContent = 'A comparação aceita no máximo 4 simulações.';
-      return;
-    }
-
-    const duplicate = comparisons.some(c =>
-      Math.abs(c.principal - sim.principal) < 0.005 &&
-      c.releaseISO === sim.releaseISO &&
-      c.firstDueISO === sim.firstDueISO
-    );
-
-    if(duplicate){
-      $('msg').textContent = 'Essa mesma simulação já está na comparação.';
-      return;
-    }
-
-    comparisons.push(JSON.parse(JSON.stringify(sim)));
-    renderComparison();
-    $('msg').style.color = 'var(--ok)';
-    $('msg').textContent = 'Simulação adicionada à comparação.';
-    setTimeout(() => {
-      if($('msg').textContent === 'Simulação adicionada à comparação.'){
-        $('msg').textContent = '';
-        $('msg').style.color = '';
-      }
-    }, 1500);
-  });
-
-  $('clearCompare').addEventListener('click', () => {
-    comparisons = [];
-    renderComparison();
-  });
-
-  $('clearForm').addEventListener('click', () => {
-    $('valor').value = '';
-    setDefaultDates();
-    $('msg').textContent = '';
-    current = null;
-    ['sValor','sAdm','sBase','sCarencia'].forEach(id => $(id).textContent = '—');
-    $('resultBody').innerHTML = '';
-  });
-
-  setDefaultDates();
-  calculate();
+function parseMoney(value){
+ let s=String(value||'').trim().replace(/\s/g,'');
+ if(s.includes(',')&&s.includes('.')) s=s.replace(/\./g,'').replace(',','.');
+ else if(s.includes(',')) s=s.replace(',','.');
+ const n=Number(s); return Number.isFinite(n)?n:NaN;
+}
+function parseISO(s){if(!s)return null;const [y,m,d]=s.split('-').map(Number);return (!y||!m||!d)?null:{y,m,d}}
+function formatDateBR(iso){const p=parseISO(iso);return p?`${String(p.d).padStart(2,'0')}/${String(p.m).padStart(2,'0')}/${p.y}`:iso||''}
+function utcMs(p){return Date.UTC(p.y,p.m-1,p.d)}
+function daysBetween(a,b){return Math.round((utcMs(b)-utcMs(a))/86400000)}
+function daysInMonth(y,m){return new Date(Date.UTC(y,m,0)).getUTCDate()}
+function addMonthsClamped(base,months){const zero=(base.m-1)+months,y=base.y+Math.floor(zero/12),m=((zero%12)+12)%12+1,d=Math.min(base.d,daysInMonth(y,m));return {y,m,d}}
+function isoTodayLocal(){const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function addCalendarMonthLocal(date){const y=date.getFullYear(),m=date.getMonth(),day=date.getDate(),tm=m+1,ty=y+Math.floor(tm/12),tmo=((tm%12)+12)%12,max=new Date(ty,tmo+1,0).getDate();return new Date(ty,tmo,Math.min(day,max))}
+function isoLocal(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
+function setDefaultDates(){const today=new Date();$('liberacao').value=isoTodayLocal();$('vencimento').value=isoLocal(addCalendarMonthLocal(today))}
+function paymentForTerm(principal,term,release,firstDue){
+ const financed=principal*(1+ADM);let discountSum=0;
+ for(let k=0;k<term;k++){const due=addMonthsClamped(firstDue,k),days=daysBetween(release,due),factor=Math.pow(1+ROOT_RATE,days/30);discountSum+=1/factor}
+ return financed/discountSum;
+}
+function buildSimulation(){
+ const principal=parseMoney($('valor').value),release=parseISO($('liberacao').value),firstDue=parseISO($('vencimento').value);
+ $('msg').textContent='';$('msg').style.color='';
+ if(!Number.isFinite(principal)||principal<=0){$('msg').textContent='Informe um valor de crédito válido.';return null}
+ if(!release||!firstDue){$('msg').textContent='Informe as datas de liberação e do primeiro vencimento.';return null}
+ const grace=daysBetween(release,firstDue);
+ if(grace<=0){$('msg').textContent='O primeiro vencimento deve ser posterior à liberação.';return null}
+ if(grace>180){$('msg').textContent='A carência informada é muito longa para esta simulação.';return null}
+ const financed=principal*(1+ADM),admValue=principal*ADM,terms=[];
+ for(let n=MIN_TERM;n<=MAX_TERM;n++){const installment=paymentForTerm(principal,n,release,firstDue),total=installment*n,financeCost=total-financed;terms.push({n,installment,total,financeCost})}
+ return {principal,financed,admValue,release,firstDue,grace,releaseISO:$('liberacao').value,firstDueISO:$('vencimento').value,terms};
+}
+function shareWhatsApp(sim,t){
+ const text=[
+  '*J.E Microcrédito - Simulação*','',
+  `Valor do crédito: ${money(sim.principal)}`,
+  `Prazo: ${t.n}x`,
+  `Valor da parcela: ${money(t.installment)}`,
+  `Total das parcelas: ${money(t.total)}`,
+  `Data da liberação: ${formatDateBR(sim.releaseISO)}`,
+  `1º vencimento: ${formatDateBR(sim.firstDueISO)}`,'',
+  'Condições: taxa de 3,98% a.m. + ADM 3%.',
+  'Simulação comercial sujeita à análise e aprovação.'
+ ].join('\n');
+ window.open(`https://wa.me/?text=${encodeURIComponent(text)}`,'_blank','noopener');
+}
+function renderCurrent(sim){
+ current=sim;$('sValor').textContent=money(sim.principal);$('sAdm').textContent=money(sim.admValue);$('sBase').textContent=money(sim.financed);$('sCarencia').textContent=`${sim.grace} dias`;
+ $('resultBody').innerHTML='';$('resultCards').innerHTML='';
+ sim.terms.forEach(t=>{
+  const tr=document.createElement('tr');
+  tr.innerHTML=`<td>${t.n}x</td><td><strong>${money(t.installment)}</strong></td><td>${money(t.total)}</td><td>${money(t.financeCost)}</td><td><button class="share" type="button">WhatsApp</button></td>`;
+  tr.querySelector('.share').addEventListener('click',()=>shareWhatsApp(sim,t));$('resultBody').appendChild(tr);
+  const card=document.createElement('div');card.className='result-card';
+  card.innerHTML=`<div class="result-top"><div class="result-term">${t.n}x</div><div class="result-installment"><div class="k">PARCELA</div><div class="v">${money(t.installment)}</div></div></div><div class="result-meta"><span>Total: ${money(t.total)}</span><span>Custo: ${money(t.financeCost)}</span></div><button class="share" type="button">Compartilhar no WhatsApp</button>`;
+  card.querySelector('.share').addEventListener('click',()=>shareWhatsApp(sim,t));$('resultCards').appendChild(card);
+ });
+}
+function calculate(){const sim=buildSimulation();if(!sim)return null;renderCurrent(sim);return sim}
+function renderComparison(){
+ const chips=$('compareChips');chips.innerHTML='';
+ comparisons.forEach((c,i)=>{const chip=document.createElement('div');chip.className='chip';chip.innerHTML=`<span>Simulação ${i+1}: <b>${money(c.principal)}</b></span><button type="button">×</button>`;chip.querySelector('button').onclick=()=>{comparisons.splice(i,1);renderComparison()};chips.appendChild(chip)});
+ $('compareEmpty').hidden=comparisons.length>0;$('compareWrap').hidden=comparisons.length===0;if(!comparisons.length)return;
+ const hr=document.createElement('tr');hr.innerHTML='<th>Prazo</th>'+comparisons.map((c,i)=>`<th>Sim. ${i+1}<br><span class="small">${money(c.principal)}</span></th>`).join('');$('compareHead').innerHTML='';$('compareHead').appendChild(hr);$('compareBody').innerHTML='';
+ for(let term=MIN_TERM;term<=MAX_TERM;term++){const values=comparisons.map(c=>c.terms.find(t=>t.n===term).installment),min=Math.min(...values),tr=document.createElement('tr');let cells=`<td>${term}x</td>`;values.forEach(v=>cells+=`<td class="${values.length>1&&Math.abs(v-min)<.005?'best':''}"><strong>${money(v)}</strong></td>`);tr.innerHTML=cells;$('compareBody').appendChild(tr)}
+}
+$('form').addEventListener('submit',e=>{e.preventDefault();calculate()});
+$('addCompare').addEventListener('click',()=>{const sim=calculate();if(!sim)return;if(comparisons.length>=4){$('msg').textContent='A comparação aceita no máximo 4 simulações.';return}const dup=comparisons.some(c=>Math.abs(c.principal-sim.principal)<.005&&c.releaseISO===sim.releaseISO&&c.firstDueISO===sim.firstDueISO);if(dup){$('msg').textContent='Essa mesma simulação já está na comparação.';return}comparisons.push(JSON.parse(JSON.stringify(sim)));renderComparison();$('msg').style.color='var(--ok)';$('msg').textContent='Simulação adicionada à comparação.'});
+$('clearCompare').addEventListener('click',()=>{comparisons=[];renderComparison()});
+$('clearForm').addEventListener('click',()=>{$('valor').value='';setDefaultDates();$('msg').textContent='';current=null;['sValor','sAdm','sBase','sCarencia'].forEach(id=>$(id).textContent='—');$('resultBody').innerHTML='';$('resultCards').innerHTML=''});
+setDefaultDates();calculate();
 })();
 </script>
-  <script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./service-worker.js');
-  });
-}
-  </script>
+<script>
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./service-worker.js'))}
+</script>
 </body>
 </html>
