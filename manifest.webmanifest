@@ -1,0 +1,12 @@
+{
+  "name": "J.E Microcrédito - Simulador",
+  "short_name": "J.E Microcrédito",
+  "description": "Simulador comercial de crédito J.E Microcrédito",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#0d0d0f",
+  "theme_color": "#0d0d0f",
+  "lang": "pt-BR"
+}
