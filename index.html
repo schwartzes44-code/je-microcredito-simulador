@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>J.E Microcrédito - Simulador</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+<meta name="theme-color" content="#0d0d0f">
 <style>
 :root{
   --bg:#0d0d0f; --panel:#18181b; --panel2:#232326; --panel3:#2a2a2e;
@@ -433,5 +435,12 @@ td strong{color:var(--gold2)}
   calculate();
 })();
 </script>
+  <script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js');
+  });
+}
+  </script>
 </body>
 </html>
