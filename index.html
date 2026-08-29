@@ -36,6 +36,7 @@ input:focus{border-color:var(--gold)}
  .summary{grid-template-columns:1fr 1fr;gap:7px;margin-bottom:10px}.metric{padding:9px}.metric .k{font-size:10px;margin-bottom:4px}.metric .v{font-size:14px}
  .result-table{display:none}.result-cards{display:block}.note{font-size:10px;line-height:1.4}.compare-head .danger{width:100%}.chip button{width:auto}
 }
+.share-complete-wrap{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:14px;color:var(--muted);font-size:12px}.share-complete{width:46px!important;height:46px!important;min-width:46px!important;min-height:46px!important;margin:0!important}
 </style>
 </head>
 <body>
@@ -77,9 +78,9 @@ input:focus{border-color:var(--gold)}
  <div class="metric"><div class="k">Carência inicial</div><div class="v" id="sCarencia">—</div></div>
 </div>
 <div class="table-wrap result-table">
-<table><thead><tr><th>Parcelas</th><th>Valor da parcela</th><th>Total pago</th><th>Custo financeiro*</th><th>Compartilhar</th></tr></thead><tbody id="resultBody"></tbody></table>
+<table><thead><tr><th>Parcelas</th><th>Valor da parcela</th><th>Total pago</th><th>Custo financeiro*</th></tr></thead><tbody id="resultBody"></tbody></table>
 </div>
-<div id="resultCards" class="result-cards"></div>
+<div id="resultCards" class="result-cards"></div><div class="share-complete-wrap"><button id="shareComplete" class="share share-complete" type="button" aria-label="Compartilhar tabela completa">${whatsappIcon()}</button><span>Compartilhar tabela completa</span></div>
 <p class="note">* Custo financeiro = total das parcelas menos a base financiada (crédito + taxa ADM). O cálculo mantém a fórmula validada de 3,98% a.m. com dias corridos e vencimentos mensais reais.</p>
 </section>
 
@@ -163,7 +164,7 @@ function roundRect(ctx,x,y,w,h,r){
  ctx.closePath();
 }
 
-function createSimulationImage(sim,t){
+function createSimulationImage(sim){
  const canvas=document.createElement('canvas');
  canvas.width=1080;
  canvas.height=1350;
@@ -183,67 +184,81 @@ function createSimulationImage(sim,t){
  ctx.fillStyle='#c7a247';
  ctx.fillText('Microcrédito',205,145);
 
- ctx.fillStyle='#aaaab0';
- ctx.font='32px Arial';
- ctx.fillText('Simulação de crédito',90,205);
-
- ctx.fillStyle='#18181b';
- roundRect(ctx,90,265,900,230,28);
- ctx.fill();
-
- ctx.fillStyle='#aaaab0';
- ctx.font='28px Arial';
- ctx.fillText('VALOR DO CRÉDITO',130,325);
- ctx.fillStyle='#e4c86f';
- ctx.font='700 70px Arial';
- ctx.fillText(money(sim.principal),130,410);
-
- ctx.fillStyle='#18181b';
- roundRect(ctx,90,535,900,330,28);
- ctx.fill();
-
- ctx.fillStyle='#aaaab0';
- ctx.font='28px Arial';
- ctx.fillText('PRAZO',130,600);
- ctx.fillText('VALOR DA PARCELA',430,600);
-
- ctx.fillStyle='#f5f5f5';
- ctx.font='700 58px Arial';
- ctx.fillText(`${t.n}x`,130,675);
- ctx.fillStyle='#e4c86f';
- ctx.fillText(money(t.installment),430,675);
-
- ctx.fillStyle='#aaaab0';
- ctx.font='28px Arial';
- ctx.fillText('TOTAL DAS PARCELAS',130,755);
- ctx.fillStyle='#f5f5f5';
- ctx.font='700 42px Arial';
- ctx.fillText(money(t.total),130,815);
-
- ctx.fillStyle='#aaaab0';
- ctx.font='28px Arial';
- ctx.fillText('DATA DA LIBERAÇÃO',90,945);
- ctx.fillText('1º VENCIMENTO',590,945);
  ctx.fillStyle='#f5f5f5';
  ctx.font='700 38px Arial';
- ctx.fillText(formatDateBR(sim.releaseISO),90,1000);
- ctx.fillText(formatDateBR(sim.firstDueISO),590,1000);
+ ctx.fillText('SIMULAÇÃO DE CRÉDITO',90,215);
+
+ ctx.fillStyle='#18181b';
+ roundRect(ctx,90,260,900,160,28);
+ ctx.fill();
 
  ctx.fillStyle='#aaaab0';
  ctx.font='28px Arial';
- ctx.fillText('Simulação comercial sujeita à análise e aprovação.',90,1130);
+ ctx.fillText('VALOR DO CRÉDITO',130,320);
+ ctx.fillStyle='#e4c86f';
+ ctx.font='700 64px Arial';
+ ctx.fillText(money(sim.principal),130,390);
 
- ctx.fillStyle='#73737a';
- ctx.font='24px Arial';
- ctx.fillText('J.E Microcrédito • Simulador para apoio comercial',90,1215);
+ const tableX=90, tableY=470, tableW=900, rowH=82;
+ const col=[0,170,430,690,900];
+
+ ctx.fillStyle='#c7a247';
+ roundRect(ctx,tableX,tableY,tableW,rowH,18);
+ ctx.fill();
+
+ ctx.fillStyle='#111';
+ ctx.font='700 24px Arial';
+ ctx.textAlign='center';
+ ctx.textBaseline='middle';
+ const headers=['PRAZO','PARCELA','TOTAL A PAGAR','CUSTO TOTAL'];
+ for(let i=0;i<4;i++){
+   ctx.fillText(headers[i],tableX+(col[i]+col[i+1])/2,tableY+rowH/2);
+ }
+
+ ctx.font='700 25px Arial';
+ for(let r=0;r<sim.terms.length;r++){
+   const y=tableY+rowH*(r+1);
+   ctx.fillStyle=r%2===0?'#f2f2f2':'#e8e8e8';
+   ctx.fillRect(tableX,y,tableW,rowH);
+   ctx.strokeStyle='#b8b8b8';
+   ctx.lineWidth=1;
+   ctx.strokeRect(tableX,y,tableW,rowH);
+
+   const t=sim.terms[r];
+   const vals=[`${t.n}x`,money(t.installment),money(t.total),money(t.financeCost)];
+   for(let i=0;i<4;i++){
+     ctx.fillStyle='#111';
+     ctx.fillText(vals[i],tableX+(col[i]+col[i+1])/2,y+rowH/2);
+   }
+ }
+
+ ctx.strokeStyle='#b8b8b8';
+ ctx.lineWidth=1;
+ for(let i=1;i<4;i++){
+   ctx.beginPath();
+   ctx.moveTo(tableX+col[i],tableY);
+   ctx.lineTo(tableX+col[i],tableY+rowH*(sim.terms.length+1));
+   ctx.stroke();
+ }
+
+ const footerY=tableY+rowH*(sim.terms.length+1)+55;
+ ctx.textAlign='left';
+ ctx.textBaseline='alphabetic';
+ ctx.fillStyle='#f5f5f5';
+ ctx.font='700 32px Arial';
+ ctx.fillText('J.E Microcrédito',90,footerY);
+
+ ctx.fillStyle='#aaaab0';
+ ctx.font='26px Arial';
+ ctx.fillText('Simulação comercial sujeita à análise e aprovação.',90,footerY+50);
 
  return canvas;
 }
 
-async function shareWhatsApp(sim,t){
- const canvas=createSimulationImage(sim,t);
+async function shareWhatsApp(sim){
+ const canvas=createSimulationImage(sim);
  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
- const file=new File([blob],`JE_Microcredito_${t.n}x.png`,{type:'image/png'});
+ const file=new File([blob],'JE_Microcredito_Simulacao_Completa.png',{type:'image/png'});
 
  if(navigator.canShare && navigator.canShare({files:[file]}) && navigator.share){
    try{
@@ -256,7 +271,7 @@ async function shareWhatsApp(sim,t){
 
  const a=document.createElement('a');
  a.href=URL.createObjectURL(blob);
- a.download=`JE_Microcredito_${t.n}x.png`;
+ a.download='JE_Microcredito_Simulacao_Completa.png';
  a.click();
  setTimeout(()=>URL.revokeObjectURL(a.href),1500);
  $('msg').style.color='var(--ok)';
@@ -268,14 +283,15 @@ function renderCurrent(sim){
  $('resultBody').innerHTML='';$('resultCards').innerHTML='';
  sim.terms.forEach(t=>{
   const tr=document.createElement('tr');
-  tr.innerHTML=`<td>${t.n}x</td><td><strong>${money(t.installment)}</strong></td><td>${money(t.total)}</td><td>${money(t.financeCost)}</td><td><button class="share" type="button" aria-label="Compartilhar simulação">${whatsappIcon()}</button></td>`;
+  tr.innerHTML=`<td>${t.n}x</td><td><strong>${money(t.installment)}</strong></td><td>${money(t.total)}</td><td>${money(t.financeCost)}</td>`;
   tr.querySelector('.share').addEventListener('click',()=>shareWhatsApp(sim,t));$('resultBody').appendChild(tr);
   const card=document.createElement('div');card.className='result-card';
-  card.innerHTML=`<div class="result-top"><div class="result-term">${t.n}x</div><div class="result-installment"><div class="k">PARCELA</div><div class="v">${money(t.installment)}</div></div></div><div class="result-meta"><span>Total: ${money(t.total)}</span><span>Custo: ${money(t.financeCost)}</span></div><div class="result-actions"><button class="share" type="button" aria-label="Compartilhar simulação">${whatsappIcon()}</button></div>`;
+  card.innerHTML=`<div class="result-top"><div class="result-term">${t.n}x</div><div class="result-installment"><div class="k">PARCELA</div><div class="v">${money(t.installment)}</div></div></div><div class="result-meta"><span>Total: ${money(t.total)}</span><span>Custo: ${money(t.financeCost)}</span></div>`;
   card.querySelector('.share').addEventListener('click',()=>shareWhatsApp(sim,t));$('resultCards').appendChild(card);
  });
 }
 function calculate(){const sim=buildSimulation();if(!sim)return null;renderCurrent(sim);return sim}
+$('shareComplete').addEventListener('click',()=>{if(!current){const sim=calculate();if(!sim)return;}shareWhatsApp(current)});
 function renderComparison(){
  const chips=$('compareChips');chips.innerHTML='';
  comparisons.forEach((c,i)=>{const chip=document.createElement('div');chip.className='chip';chip.innerHTML=`<span>Simulação ${i+1}: <b>${money(c.principal)}</b></span><button type="button">×</button>`;chip.querySelector('button').onclick=()=>{comparisons.splice(i,1);renderComparison()};chips.appendChild(chip)});
