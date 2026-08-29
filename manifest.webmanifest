@@ -8,5 +8,13 @@
   "orientation": "portrait-primary",
   "background_color": "#0d0d0f",
   "theme_color": "#0d0d0f",
-  "lang": "pt-BR"
+  "lang": "pt-BR",
+"icons": [
+  {
+    "src": "./icon.svg",
+    "sizes": "any",
+    "type": "image/svg+xml",
+    "purpose": "any maskable"
+  }
+]
 }
