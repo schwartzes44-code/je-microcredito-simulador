@@ -230,7 +230,7 @@ function createSimulationImage(sim){
 
  // Table
  const tableX=85, tableY=575, tableW=910, rowH=72;
- const col=[0,175,435,690,910];
+ const col=[0,220,565,910];
 
  ctx.fillStyle='#c7a247';
  roundRect(ctx,tableX,tableY,tableW,rowH,18);
@@ -241,8 +241,8 @@ function createSimulationImage(sim){
  ctx.textAlign='center';
  ctx.textBaseline='middle';
 
- const headers=['PRAZO','PARCELA','TOTAL A PAGAR','CUSTO TOTAL'];
- for(let i=0;i<4;i++){
+ const headers=['PRAZO','PARCELA','TOTAL A PAGAR'];
+ for(let i=0;i<3;i++){
    ctx.fillText(headers[i],tableX+(col[i]+col[i+1])/2,tableY+rowH/2);
  }
 
@@ -259,9 +259,9 @@ function createSimulationImage(sim){
    ctx.strokeRect(tableX,y,tableW,rowH);
 
    const t=sim.terms[r];
-   const vals=[`${t.n}x`,money(t.installment),money(t.total),money(t.financeCost)];
+   const vals=[`${t.n}x`,money(t.installment),money(t.total)];
 
-   for(let i=0;i<4;i++){
+   for(let i=0;i<3;i++){
      ctx.fillStyle='#111';
      ctx.fillText(vals[i],tableX+(col[i]+col[i+1])/2,y+rowH/2);
    }
@@ -270,7 +270,7 @@ function createSimulationImage(sim){
  // Vertical table lines
  ctx.strokeStyle='#b8b8b8';
  ctx.lineWidth=1;
- for(let i=1;i<4;i++){
+ for(let i=1;i<3;i++){
    ctx.beginPath();
    ctx.moveTo(tableX+col[i],tableY);
    ctx.lineTo(tableX+col[i],tableY+rowH*(sim.terms.length+1));
