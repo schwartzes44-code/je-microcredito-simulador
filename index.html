@@ -186,6 +186,28 @@ function roundRect(ctx,x,y,w,h,r){
  ctx.closePath();
 }
 
+const cmBrasilLogo=new Image();
+cmBrasilLogo.src='./cmbrasil-logo.png';
+
+function ensureImageLoaded(img){
+ if(img.complete && img.naturalWidth>0)return Promise.resolve(img);
+ return new Promise((resolve,reject)=>{
+   img.addEventListener('load',()=>resolve(img),{once:true});
+   img.addEventListener('error',()=>reject(new Error('Não foi possível carregar a logo da CMBrasil.')),{once:true});
+ });
+}
+
+function drawCMBrasilLogo(ctx){
+ if(!(cmBrasilLogo.complete && cmBrasilLogo.naturalWidth>0))return;
+ const maxW=255, maxH=175;
+ const ratio=Math.min(maxW/cmBrasilLogo.naturalWidth,maxH/cmBrasilLogo.naturalHeight);
+ const w=cmBrasilLogo.naturalWidth*ratio;
+ const h=cmBrasilLogo.naturalHeight*ratio;
+ const x=995-w;
+ const y=48;
+ ctx.drawImage(cmBrasilLogo,x,y,w,h);
+}
+
 function createSimulationImage(sim){
  const canvas=document.createElement('canvas');
  canvas.width=1080;
@@ -208,6 +230,9 @@ function createSimulationImage(sim){
  ctx.fillText('J.E',85,135);
  ctx.fillStyle='#c7a247';
  ctx.fillText('Microcrédito',200,135);
+
+ // Logo oficial CMBrasil
+ drawCMBrasilLogo(ctx);
 
  ctx.fillStyle='#f5f5f5';
  ctx.font='700 38px Arial';
@@ -329,6 +354,7 @@ function createSimulationImage(sim){
 }
 
 async function shareWhatsApp(sim){
+ try{await ensureImageLoaded(cmBrasilLogo)}catch(e){}
  const canvas=createSimulationImage(sim);
  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
  const file=new File([blob],'JE_Microcredito_Simulacao_Completa.png',{type:'image/png'});
@@ -388,6 +414,9 @@ function createComparisonImage(){
  ctx.fillText('J.E',85,130);
  ctx.fillStyle='#c7a247';
  ctx.fillText('Microcrédito',200,130);
+
+ // Logo oficial CMBrasil
+ drawCMBrasilLogo(ctx);
 
  ctx.fillStyle='#f5f5f5';
  ctx.font='700 36px Arial';
@@ -490,6 +519,7 @@ function createComparisonImage(){
 
 async function shareComparison(){
  if(!comparisons.length)return;
+ try{await ensureImageLoaded(cmBrasilLogo)}catch(e){}
  const canvas=createComparisonImage();
  if(!canvas)return;
  const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
