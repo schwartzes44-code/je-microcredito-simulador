@@ -1,11 +1,11 @@
-const CACHE_NAME = 'je-microcredito-pwa-v5-3';
+const CACHE_NAME = 'je-microcredito-pwa-v5-4';
 
 const APP_ASSETS = [
   './',
   './index.html',
   './manifest.webmanifest',
   './icon.svg',
-  './cmbrasil-logo.png'
+  './cmbrasil-logo.jpg'
 ];
 
 self.addEventListener('install', event => {
