@@ -109,7 +109,7 @@ input:focus{border-color:var(--gold)}
 <div class="conditions">
  <div class="condition"><span class="k">Taxa a.m.</span><span class="v">3,98%</span></div>
  <div class="condition"><span class="k">Taxa ADM</span><span class="v">3,00%</span></div>
- <div class="condition"><span class="k">Prazos</span><span class="v">8x a 15x</span></div>
+ <div class="condition"><span class="k">Prazos</span><span class="v">8x a 24x</span></div>
  <div class="condition"><span class="k">Base temporal</span><span class="v">30 dias</span></div>
 </div>
 <div class="actions">
@@ -155,7 +155,7 @@ input:focus{border-color:var(--gold)}
 
 <script>
 (() => {
-const ROOT_RATE=0.0398, ADM=0.03, BR_TCG_MONTHLY=0.0015, MIN_TERM=8, MAX_TERM=15;
+const ROOT_RATE=0.0398, ADM=0.03, BR_TCG_MONTHLY=0.0015, MIN_TERM=8, MAX_TERM=24;
 let current=null, comparisons=[];
 const $=id=>document.getElementById(id);
 const money=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});
