@@ -53,6 +53,15 @@ input:focus{border-color:var(--gold)}
  .compare-table .small{font-size:8px;line-height:1.15}
 }
 
+
+.br-box{margin-top:14px;padding:14px;border:1px solid #34343a;border-radius:14px;background:#151518}
+.br-title{font-weight:800;color:var(--gold);margin-bottom:10px}
+.br-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.br-grid select{width:100%;background:#0f0f12;color:#f5f5f5;border:1px solid #3b3b42;border-radius:10px;padding:11px 10px;font:inherit}
+.br-grid label{display:block;margin-bottom:6px}
+#brHint{margin-top:9px;color:#b8b8bf}
+@media(max-width:700px){.br-grid{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -69,6 +78,33 @@ input:focus{border-color:var(--gold)}
  <div><label for="valor">Valor do crédito</label><input id="valor" inputmode="numeric" autocomplete="off" placeholder="R$ 0,00" value="R$ 10.000,00"></div>
  <div><label for="liberacao">Data da liberação</label><input id="liberacao" type="date"></div>
  <div><label for="vencimento">1º vencimento</label><input id="vencimento" type="date"></div>
+</div>
+<div class="br-box">
+  <div class="br-title">BR Garantias</div>
+  <div class="br-grid">
+    <div>
+      <label for="brGarantias">Utilizar BR Garantias?</label>
+      <select id="brGarantias">
+        <option value="nao" selected>Não</option>
+        <option value="sim">Sim</option>
+      </select>
+    </div>
+    <div id="brCoberturaWrap" hidden>
+      <label for="brCobertura">Fundo Garantidor</label>
+      <select id="brCobertura">
+        <option value="0.80">80%</option>
+        <option value="1.00" selected>100%</option>
+      </select>
+    </div>
+    <div id="brAssociacaoWrap" hidden>
+      <label for="brAssociacao">Taxa de Associação</label>
+      <select id="brAssociacao">
+        <option value="0" selected>Não</option>
+        <option value="100">Sim — R$ 100,00</option>
+      </select>
+    </div>
+  </div>
+  <div id="brHint" class="small" hidden>TCG calculada automaticamente conforme prazo e cobertura.</div>
 </div>
 <div class="conditions">
  <div class="condition"><span class="k">Taxa a.m.</span><span class="v">3,98%</span></div>
@@ -97,7 +133,7 @@ input:focus{border-color:var(--gold)}
 <table><thead><tr><th>Parcelas</th><th>Valor da parcela</th><th>Total pago</th><th>Custo financeiro*</th></tr></thead><tbody id="resultBody"></tbody></table>
 </div>
 <div id="resultCards" class="result-cards"></div><div id="shareCompleteWrap" class="share-complete-wrap" hidden><button id="shareComplete" class="share share-complete" type="button" aria-label="Compartilhar tabela completa"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.1 4.9A9.9 9.9 0 0 0 3.5 16.8L2 22l5.3-1.4A9.9 9.9 0 0 0 22 11.9a9.8 9.8 0 0 0-2.9-7zm-7.1 15a8 8 0 0 1-4.1-1.1l-.3-.2-3.1.8.8-3-.2-.3a8 8 0 1 1 6.9 3.8zm4.4-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.4.3-.4c.1-.1.1-.3 0-.4-.1-.1-.5-1.3-.7-1.8-.2-.5-.4-.4-.5-.4h-.4c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.9 2.3 1 2.5c.1.2 1.8 2.8 4.4 3.9.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1-.1-.1-.2-.2-.4-.3z"/></svg></button><span>Compartilhar tabela completa</span></div>
-<p class="note">* Custo financeiro = total das parcelas menos a base financiada (crédito + taxa ADM). O cálculo mantém a fórmula validada de 3,98% a.m. com dias corridos e vencimentos mensais reais.</p>
+<p class="note">* Custo financeiro = total das parcelas menos a base financiada de cada prazo. Sem BR Garantias, mantém-se a fórmula original. Com BR Garantias, a TCG é calculada automaticamente conforme cobertura e quantidade de parcelas.</p>
 </section>
 
 <section class="card">
@@ -119,7 +155,7 @@ input:focus{border-color:var(--gold)}
 
 <script>
 (() => {
-const ROOT_RATE=0.0398, ADM=0.03, MIN_TERM=8, MAX_TERM=15;
+const ROOT_RATE=0.0398, ADM=0.03, BR_TCG_MONTHLY=0.0015, MIN_TERM=8, MAX_TERM=15;
 let current=null, comparisons=[];
 const $=id=>document.getElementById(id);
 const money=n=>Number(n).toLocaleString('pt-BR',{style:'currency',currency:'BRL',minimumFractionDigits:2,maximumFractionDigits:2});
@@ -154,10 +190,31 @@ function isoTodayLocal(){const d=new Date();return `${d.getFullYear()}-${String(
 function addCalendarMonthLocal(date){const y=date.getFullYear(),m=date.getMonth(),day=date.getDate(),tm=m+1,ty=y+Math.floor(tm/12),tmo=((tm%12)+12)%12,max=new Date(ty,tmo+1,0).getDate();return new Date(ty,tmo,Math.min(day,max))}
 function isoLocal(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`}
 function setDefaultDates(){const today=new Date();$('liberacao').value=isoTodayLocal();$('vencimento').value=isoLocal(addCalendarMonthLocal(today))}
-function paymentForTerm(principal,term,release,firstDue){
- const financed=principal*(1+ADM);let discountSum=0;
- for(let k=0;k<term;k++){const due=addMonthsClamped(firstDue,k),days=daysBetween(release,due),factor=Math.pow(1+ROOT_RATE,days/30);discountSum+=1/factor}
- return financed/discountSum;
+function discountSumForTerm(term,release,firstDue){
+ let discountSum=0;
+ for(let k=0;k<term;k++){
+   const due=addMonthsClamped(firstDue,k),days=daysBetween(release,due),factor=Math.pow(1+ROOT_RATE,days/30);
+   discountSum+=1/factor;
+ }
+ return discountSum;
+}
+function brFinancedBase(principal,term,coverage,association){
+ const normalBase=principal*(1+ADM)+association;
+ const q=coverage*BR_TCG_MONTHLY*term;
+
+ // Regra validada no sistema CMBrasil:
+ // 80% e VH acima de R$ 15 mil: TCG direta sobre VH (+ associação, quando houver).
+ // Demais cenários testados: TCG incorporada à própria operação (cálculo circular resolvido).
+ if(coverage===0.80 && principal>15000){
+   const tcgBase=principal+association;
+   const tcg=tcgBase*q;
+   return {financed:normalBase+tcg,tcg};
+ }
+ const financed=normalBase/(1-q);
+ return {financed,tcg:financed-normalBase};
+}
+function paymentForBase(financed,term,release,firstDue){
+ return financed/discountSumForTerm(term,release,firstDue);
 }
 function buildSimulation(){
  const principal=parseMoney($('valor').value),release=parseISO($('liberacao').value),firstDue=parseISO($('vencimento').value);
@@ -167,10 +224,40 @@ function buildSimulation(){
  const grace=daysBetween(release,firstDue);
  if(grace<=0){$('msg').textContent='O primeiro vencimento deve ser posterior à liberação.';return null}
  if(grace>180){$('msg').textContent='A carência informada é muito longa para esta simulação.';return null}
- const financed=principal*(1+ADM),admValue=principal*ADM,terms=[];
- for(let n=MIN_TERM;n<=MAX_TERM;n++){const installment=paymentForTerm(principal,n,release,firstDue),total=installment*n,financeCost=total-financed;terms.push({n,installment,total,financeCost})}
- return {principal,financed,admValue,release,firstDue,grace,releaseISO:$('liberacao').value,firstDueISO:$('vencimento').value,terms};
+ const admValue=principal*ADM;
+ const brEnabled=$('brGarantias').value==='sim';
+ const coverage=brEnabled?Number($('brCobertura').value):0;
+ const association=brEnabled?Number($('brAssociacao').value):0;
+ const normalBase=principal*(1+ADM);
+ const terms=[];
+ for(let n=MIN_TERM;n<=MAX_TERM;n++){
+   let financed=normalBase,tcg=0;
+   if(brEnabled){
+     const br=brFinancedBase(principal,n,coverage,association);
+     financed=br.financed;tcg=br.tcg;
+   }
+   const installment=paymentForBase(financed,n,release,firstDue);
+   const total=installment*n,financeCost=total-financed;
+   terms.push({n,installment,total,financeCost,financed,tcg});
+ }
+ return {
+   principal,financed:normalBase,admValue,release,firstDue,grace,
+   releaseISO:$('liberacao').value,firstDueISO:$('vencimento').value,
+   brEnabled,coverage,association,terms
+ };
 }
+
+function updateBRControls(){
+ const on=$('brGarantias').value==='sim';
+ $('brCoberturaWrap').hidden=!on;
+ $('brAssociacaoWrap').hidden=!on;
+ $('brHint').hidden=!on;
+}
+$('brGarantias').addEventListener('change',()=>{updateBRControls();calculate()});
+$('brCobertura').addEventListener('change',calculate);
+$('brAssociacao').addEventListener('change',calculate);
+updateBRControls();
+
 function whatsappIcon(){
  return `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.1 4.9A9.9 9.9 0 0 0 3.5 16.8L2 22l5.3-1.4A9.9 9.9 0 0 0 22 11.9a9.8 9.8 0 0 0-2.9-7zm-7.1 15a8 8 0 0 1-4.1-1.1l-.3-.2-3.1.8.8-3-.2-.3a8 8 0 1 1 6.9 3.8zm4.4-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1-.2.2-.6.8-.8.9-.1.2-.3.2-.5.1-.2-.1-1-.4-1.9-1.2-.7-.6-1.2-1.4-1.3-1.6-.1-.2 0-.4.1-.5l.4-.4.3-.4c.1-.1.1-.3 0-.4-.1-.1-.5-1.3-.7-1.8-.2-.5-.4-.4-.5-.4h-.4c-.2 0-.4.1-.6.3-.2.2-.8.8-.8 2s.9 2.3 1 2.5c.1.2 1.8 2.8 4.4 3.9.6.3 1.1.4 1.5.5.6.2 1.2.2 1.6.1.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1-.1-.1-.2-.2-.4-.3z"/></svg>`;
 }
@@ -378,7 +465,7 @@ async function shareWhatsApp(sim){
 }
 
 function renderCurrent(sim){
- current=sim;$('shareCompleteWrap').hidden=false;$('sValor').textContent=money(sim.principal);$('sAdm').textContent=money(sim.admValue);$('sBase').textContent=money(sim.financed);$('sCarencia').textContent=`${sim.grace} dias`;
+ current=sim;$('shareCompleteWrap').hidden=false;$('sValor').textContent=money(sim.principal);$('sAdm').textContent=money(sim.admValue);$('sBase').textContent=sim.brEnabled?'Varia por prazo':money(sim.financed);$('sCarencia').textContent=`${sim.grace} dias`;
  $('resultBody').innerHTML='';$('resultCards').innerHTML='';
  sim.terms.forEach(t=>{
   const tr=document.createElement('tr');
@@ -545,16 +632,16 @@ async function shareComparison(){
 
 function renderComparison(){
  const chips=$('compareChips');chips.innerHTML='';
- comparisons.forEach((c,i)=>{const chip=document.createElement('div');chip.className='chip';chip.innerHTML=`<span>Simulação ${i+1}: <b>${money(c.principal)}</b></span><button type="button">×</button>`;chip.querySelector('button').onclick=()=>{comparisons.splice(i,1);renderComparison()};chips.appendChild(chip)});
+ comparisons.forEach((c,i)=>{const chip=document.createElement('div');chip.className='chip';chip.innerHTML=`<span>Simulação ${i+1}: <b>${money(c.principal)}</b>${c.brEnabled?` • BR ${Math.round(c.coverage*100)}%${c.association?` + assoc.`:''}`:''}</span><button type="button">×</button>`;chip.querySelector('button').onclick=()=>{comparisons.splice(i,1);renderComparison()};chips.appendChild(chip)});
  $('compareEmpty').hidden=comparisons.length>0;$('compareWrap').hidden=comparisons.length===0;$('shareCompareWrap').hidden=comparisons.length===0;if(!comparisons.length)return;
  const hr=document.createElement('tr');hr.innerHTML='<th>Prazo</th>'+comparisons.map((c,i)=>`<th>Sim. ${i+1}<br><span class="small">${money(c.principal)}</span></th>`).join('');$('compareHead').innerHTML='';$('compareHead').appendChild(hr);$('compareBody').innerHTML='';
  for(let term=MIN_TERM;term<=MAX_TERM;term++){const values=comparisons.map(c=>c.terms.find(t=>t.n===term).installment),min=Math.min(...values),tr=document.createElement('tr');let cells=`<td>${term}x</td>`;values.forEach(v=>cells+=`<td class="${values.length>1&&Math.abs(v-min)<.005?'best':''}"><strong>${money(v)}</strong></td>`);tr.innerHTML=cells;$('compareBody').appendChild(tr)}
 }
 $('form').addEventListener('submit',e=>{e.preventDefault();calculate()});
-$('addCompare').addEventListener('click',()=>{const sim=calculate();if(!sim)return;if(comparisons.length>=4){$('msg').textContent='A comparação aceita no máximo 4 simulações.';return}const dup=comparisons.some(c=>Math.abs(c.principal-sim.principal)<.005&&c.releaseISO===sim.releaseISO&&c.firstDueISO===sim.firstDueISO);if(dup){$('msg').textContent='Essa mesma simulação já está na comparação.';return}comparisons.push(JSON.parse(JSON.stringify(sim)));renderComparison();$('msg').style.color='var(--ok)';$('msg').textContent='Simulação adicionada à comparação.'});
+$('addCompare').addEventListener('click',()=>{const sim=calculate();if(!sim)return;if(comparisons.length>=4){$('msg').textContent='A comparação aceita no máximo 4 simulações.';return}const dup=comparisons.some(c=>Math.abs(c.principal-sim.principal)<.005&&c.releaseISO===sim.releaseISO&&c.firstDueISO===sim.firstDueISO&&c.brEnabled===sim.brEnabled&&c.coverage===sim.coverage&&c.association===sim.association);if(dup){$('msg').textContent='Essa mesma simulação já está na comparação.';return}comparisons.push(JSON.parse(JSON.stringify(sim)));renderComparison();$('msg').style.color='var(--ok)';$('msg').textContent='Simulação adicionada à comparação.'});
 $('clearCompare').addEventListener('click',()=>{comparisons=[];renderComparison()});
 $('shareCompare').addEventListener('click',shareComparison);
-$('clearForm').addEventListener('click',()=>{$('valor').value='';setDefaultDates();$('msg').textContent='';current=null;$('shareCompleteWrap').hidden=true;['sValor','sAdm','sBase','sCarencia'].forEach(id=>$(id).textContent='—');$('resultBody').innerHTML='';$('resultCards').innerHTML=''});
+$('clearForm').addEventListener('click',()=>{$('valor').value='';$('brGarantias').value='nao';$('brCobertura').value='1.00';$('brAssociacao').value='0';updateBRControls();setDefaultDates();$('msg').textContent='';current=null;$('shareCompleteWrap').hidden=true;['sValor','sAdm','sBase','sCarencia'].forEach(id=>$(id).textContent='—');$('resultBody').innerHTML='';$('resultCards').innerHTML=''});
 setDefaultDates();$('valor').value=money(10000);calculate();
 })();
 </script>

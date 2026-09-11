@@ -1,4 +1,4 @@
-const CACHE_NAME = 'je-microcredito-pwa-v5-4';
+const CACHE_NAME = 'je-microcredito-pwa-v5-5-br-garantias';
 
 const APP_ASSETS = [
   './',
