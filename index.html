@@ -365,7 +365,7 @@ function createSimulationImage(sim){
 
  // Table
  const tableX=85, tableY=575, tableW=910, rowH=46;
- const col=[0,220,565,910];
+ const col=[0,320,910];
 
  ctx.fillStyle='#c7a247';
  roundRect(ctx,tableX,tableY,tableW,rowH,18);
@@ -376,8 +376,8 @@ function createSimulationImage(sim){
  ctx.textAlign='center';
  ctx.textBaseline='middle';
 
- const headers=['PRAZO','PARCELA','TOTAL A PAGAR'];
- for(let i=0;i<3;i++){
+ const headers=['PRAZO','VALOR DA PARCELA'];
+ for(let i=0;i<2;i++){
    ctx.fillText(headers[i],tableX+(col[i]+col[i+1])/2,tableY+rowH/2);
  }
 
@@ -394,23 +394,21 @@ function createSimulationImage(sim){
    ctx.strokeRect(tableX,y,tableW,rowH);
 
    const t=sim.terms[r];
-   const vals=[`${t.n}x`,money(t.installment),money(t.total)];
+   const vals=[`${t.n}x`,money(t.installment)];
 
-   for(let i=0;i<3;i++){
+   for(let i=0;i<2;i++){
      ctx.fillStyle='#111';
      ctx.fillText(vals[i],tableX+(col[i]+col[i+1])/2,y+rowH/2);
    }
  }
 
- // Vertical table lines
+ // Vertical table line
  ctx.strokeStyle='#b8b8b8';
  ctx.lineWidth=1;
- for(let i=1;i<3;i++){
-   ctx.beginPath();
-   ctx.moveTo(tableX+col[i],tableY);
-   ctx.lineTo(tableX+col[i],tableY+rowH*(sim.terms.length+1));
-   ctx.stroke();
- }
+ ctx.beginPath();
+ ctx.moveTo(tableX+col[1],tableY);
+ ctx.lineTo(tableX+col[1],tableY+rowH*(sim.terms.length+1));
+ ctx.stroke();
 
  // Footer branding
  const tableBottom=tableY+rowH*(sim.terms.length+1);

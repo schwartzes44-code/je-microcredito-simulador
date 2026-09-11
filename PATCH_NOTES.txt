@@ -1,0 +1,6 @@
+v5.8 - Compartilhamento sem total a pagar
+
+- Imagem compartilhada via WhatsApp agora mostra apenas PRAZO e VALOR DA PARCELA.
+- Removida a coluna TOTAL A PAGAR da imagem enviada ao cliente.
+- Cálculos internos, tabela do aplicativo, comparação e fórmulas financeiras permanecem inalterados.
+- Cache do PWA atualizado para v5.8.

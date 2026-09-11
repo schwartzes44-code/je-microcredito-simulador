@@ -1,0 +1,12 @@
+J.E Microcrédito — v5.7
+
+AJUSTES
+- "Total a pagar" agora usa: parcela exibida (arredondada a centavos) × quantidade de parcelas.
+- Isso faz 24x de R$ 710,01 totalizar R$ 17.040,24, igual ao sistema CMBrasil.
+- A imagem compartilhada foi ampliada e compactada para comportar todas as parcelas de 8x a 24x.
+- Mantidos juros, ADM, BR Garantias 80%/100%, associação e comparação.
+
+ARQUIVOS PARA O GITHUB
+Substituir:
+1. index.html
+2. service-worker.js

@@ -1,0 +1,24 @@
+10k 100% sem associação 8x: calculado R$ 1550.06 | sistema R$ 1550.06 | OK
+10k 100% sem associação 12x: calculado R$ 1119.35 | sistema R$ 1119.35 | OK
+10k 100% sem associação 15x: calculado R$ 949.65 | sistema R$ 949.65 | OK
+10k 100% com associação 8x: calculado R$ 1565.11 | sistema R$ 1565.11 | OK
+10k 100% com associação 12x: calculado R$ 1130.21 | sistema R$ 1130.21 | OK
+10k 100% com associação 15x: calculado R$ 958.87 | sistema R$ 958.87 | OK
+10k 80% sem associação 8x: calculado R$ 1546.30 | sistema R$ 1546.30 | OK
+10k 80% sem associação 12x: calculado R$ 1115.26 | sistema R$ 1115.26 | OK
+10k 80% sem associação 15x: calculado R$ 945.30 | sistema R$ 945.30 | OK
+10k 80% com associação 8x: calculado R$ 1561.32 | sistema R$ 1561.32 | OK
+10k 80% com associação 12x: calculado R$ 1126.09 | sistema R$ 1126.09 | OK
+10k 80% com associação 15x: calculado R$ 954.48 | sistema R$ 954.48 | OK
+14,5k 80% 8x: calculado R$ 2242.14 | sistema R$ 2242.14 | OK
+14,5k 80% 12x: calculado R$ 1617.12 | sistema R$ 1617.12 | OK
+14,5k 80% 15x: calculado R$ 1370.69 | sistema R$ 1370.68 | OK
+15k 80% 8x: calculado R$ 2319.45 | sistema R$ 2319.45 | OK
+15k 80% 12x: calculado R$ 1672.89 | sistema R$ 1672.89 | OK
+15k 80% 15x: calculado R$ 1417.95 | sistema R$ 1417.95 | OK
+20k 80% 8x: calculado R$ 3091.46 | sistema R$ 3091.46 | OK
+20k 80% 12x: calculado R$ 2229.13 | sistema R$ 2229.13 | OK
+20k 80% 15x: calculado R$ 1889.02 | sistema R$ 1889.02 | OK
+20k 100% 8x: calculado R$ 3100.12 | sistema R$ 3100.12 | OK
+20k 100% 12x: calculado R$ 2238.69 | sistema R$ 2238.69 | OK
+20k 100% 15x: calculado R$ 1899.31 | sistema R$ 1899.31 | OK
