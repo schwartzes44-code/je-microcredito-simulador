@@ -237,8 +237,9 @@ function buildSimulation(){
      financed=br.financed;tcg=br.tcg;
    }
    const installment=paymentForBase(financed,n,release,firstDue);
-   const total=installment*n,financeCost=total-financed;
-   terms.push({n,installment,total,financeCost,financed,tcg});
+   const installmentRounded=Math.round((installment+Number.EPSILON)*100)/100;
+   const total=installmentRounded*n,financeCost=total-financed;
+   terms.push({n,installment:installmentRounded,total,financeCost,financed,tcg});
  }
  return {
    principal,financed:normalBase,admValue,release,firstDue,grace,
@@ -298,7 +299,7 @@ function drawCMBrasilLogo(ctx){
 function createSimulationImage(sim){
  const canvas=document.createElement('canvas');
  canvas.width=1080;
- canvas.height=1350;
+ canvas.height=1600;
  const ctx=canvas.getContext('2d');
 
  // Background
@@ -308,7 +309,7 @@ function createSimulationImage(sim){
  // Outer frame
  ctx.strokeStyle='#c7a247';
  ctx.lineWidth=6;
- roundRect(ctx,35,35,1010,1280,34);
+ roundRect(ctx,35,35,1010,1530,34);
  ctx.stroke();
 
  // Header
@@ -363,7 +364,7 @@ function createSimulationImage(sim){
  ctx.fillText(`${sim.grace} DIAS`,725,510);
 
  // Table
- const tableX=85, tableY=575, tableW=910, rowH=72;
+ const tableX=85, tableY=575, tableW=910, rowH=46;
  const col=[0,220,565,910];
 
  ctx.fillStyle='#c7a247';
@@ -371,7 +372,7 @@ function createSimulationImage(sim){
  ctx.fill();
 
  ctx.fillStyle='#111';
- ctx.font='700 24px Arial';
+ ctx.font='700 22px Arial';
  ctx.textAlign='center';
  ctx.textBaseline='middle';
 
@@ -380,7 +381,7 @@ function createSimulationImage(sim){
    ctx.fillText(headers[i],tableX+(col[i]+col[i+1])/2,tableY+rowH/2);
  }
 
- ctx.font='700 25px Arial';
+ ctx.font='700 21px Arial';
 
  for(let r=0;r<sim.terms.length;r++){
    const y=tableY+rowH*(r+1);
@@ -413,7 +414,7 @@ function createSimulationImage(sim){
 
  // Footer branding
  const tableBottom=tableY+rowH*(sim.terms.length+1);
- const footerY=tableBottom+45;
+ const footerY=tableBottom+36;
 
  ctx.textAlign='left';
  ctx.textBaseline='alphabetic';
@@ -426,16 +427,16 @@ function createSimulationImage(sim){
  ctx.fillText('Microcrédito',145,footerY);
 
  // Disclaimer highlight bar
- const barY=footerY+35;
+ const barY=footerY+28;
  ctx.fillStyle='#c7a247';
- roundRect(ctx,85,barY,910,72,18);
+ roundRect(ctx,85,barY,910,64,18);
  ctx.fill();
 
  ctx.fillStyle='#111';
- ctx.font='700 26px Arial';
+ ctx.font='700 23px Arial';
  ctx.textAlign='center';
  ctx.textBaseline='middle';
- ctx.fillText('SIMULAÇÃO COMERCIAL SUJEITA À ANÁLISE E APROVAÇÃO.',540,barY+36);
+ ctx.fillText('SIMULAÇÃO COMERCIAL SUJEITA À ANÁLISE E APROVAÇÃO.',540,barY+32);
 
  return canvas;
 }
