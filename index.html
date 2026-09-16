@@ -200,10 +200,13 @@ function discountSumForTerm(term,release,firstDue){
 }
 function brFinancedBase(principal,term,coverage,association){
  const normalBase=principal*(1+ADM)+association;
- const q=coverage*BR_TCG_MONTHLY*term;
+ const tcgPeriods = coverage === 1 ? term + 1 : term;
+ const q=coverage*BR_TCG_MONTHLY*tcgPeriods;
 
  // Regra validada no sistema CMBrasil:
  // 80% e VH acima de R$ 15 mil: TCG direta sobre VH (+ associação, quando houver).
+ // BR Garantias 100%: o sistema CMBrasil usa uma competência adicional (prazo + 1).
+ // BR Garantias 80% permanece com a regra anterior até validação específica.
  // Demais cenários testados: TCG incorporada à própria operação (cálculo circular resolvido).
  if(coverage===0.80 && principal>15000){
    const tcgBase=principal+association;

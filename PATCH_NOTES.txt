@@ -1,6 +1,7 @@
-v5.8 - Compartilhamento sem total a pagar
+J.E Microcrédito v5.9 — correção BR Garantias 100%
 
-- Imagem compartilhada via WhatsApp agora mostra apenas PRAZO e VALOR DA PARCELA.
-- Removida a coluna TOTAL A PAGAR da imagem enviada ao cliente.
-- Cálculos internos, tabela do aplicativo, comparação e fórmulas financeiras permanecem inalterados.
-- Cache do PWA atualizado para v5.8.
+- Baseada na v5.8 estável.
+- BR Garantias 100%: TCG passa a usar (número de parcelas + 1) competências.
+- Mantida sem alteração a regra de BR Garantias 80%, inclusive a exceção para valor histórico acima de R$ 15.000.
+- Taxa 3,98% a.m., ADM 3%, cálculo por dias reais e demais regras preservados.
+- Cache do service worker atualizado para v5.9.
