@@ -200,14 +200,16 @@ function discountSumForTerm(term,release,firstDue){
 }
 function brFinancedBase(principal,term,coverage,association){
  const normalBase=principal*(1+ADM)+association;
- const tcgPeriods = coverage === 1 ? term + 1 : term;
+
+ // BR Garantias 80% — regra validada contra o sistema CMBrasil em 25/09/2026:
+ // até 12 parcelas, a TCG usa o próprio prazo; de 13 a 24 parcelas,
+ // o sistema considera 1 período adicional de TCG (prazo + 1).
+ // Mantemos as demais coberturas sem alteração até validação específica.
+ const tcgPeriods=(coverage===0.80 && term>=13) ? term+1 : term;
  const q=coverage*BR_TCG_MONTHLY*tcgPeriods;
 
- // Regra validada no sistema CMBrasil:
+ // Regra previamente validada:
  // 80% e VH acima de R$ 15 mil: TCG direta sobre VH (+ associação, quando houver).
- // BR Garantias 100%: o sistema CMBrasil usa uma competência adicional (prazo + 1).
- // BR Garantias 80% permanece com a regra anterior até validação específica.
- // Demais cenários testados: TCG incorporada à própria operação (cálculo circular resolvido).
  if(coverage===0.80 && principal>15000){
    const tcgBase=principal+association;
    const tcg=tcgBase*q;
@@ -368,7 +370,7 @@ function createSimulationImage(sim){
 
  // Table
  const tableX=85, tableY=575, tableW=910, rowH=46;
- const col=[0,320,910];
+ const col=[0,220,565,910];
 
  ctx.fillStyle='#c7a247';
  roundRect(ctx,tableX,tableY,tableW,rowH,18);
@@ -379,8 +381,8 @@ function createSimulationImage(sim){
  ctx.textAlign='center';
  ctx.textBaseline='middle';
 
- const headers=['PRAZO','VALOR DA PARCELA'];
- for(let i=0;i<2;i++){
+ const headers=['PRAZO','PARCELA','TOTAL A PAGAR'];
+ for(let i=0;i<3;i++){
    ctx.fillText(headers[i],tableX+(col[i]+col[i+1])/2,tableY+rowH/2);
  }
 
@@ -397,21 +399,23 @@ function createSimulationImage(sim){
    ctx.strokeRect(tableX,y,tableW,rowH);
 
    const t=sim.terms[r];
-   const vals=[`${t.n}x`,money(t.installment)];
+   const vals=[`${t.n}x`,money(t.installment),money(t.total)];
 
-   for(let i=0;i<2;i++){
+   for(let i=0;i<3;i++){
      ctx.fillStyle='#111';
      ctx.fillText(vals[i],tableX+(col[i]+col[i+1])/2,y+rowH/2);
    }
  }
 
- // Vertical table line
+ // Vertical table lines
  ctx.strokeStyle='#b8b8b8';
  ctx.lineWidth=1;
- ctx.beginPath();
- ctx.moveTo(tableX+col[1],tableY);
- ctx.lineTo(tableX+col[1],tableY+rowH*(sim.terms.length+1));
- ctx.stroke();
+ for(let i=1;i<3;i++){
+   ctx.beginPath();
+   ctx.moveTo(tableX+col[i],tableY);
+   ctx.lineTo(tableX+col[i],tableY+rowH*(sim.terms.length+1));
+   ctx.stroke();
+ }
 
  // Footer branding
  const tableBottom=tableY+rowH*(sim.terms.length+1);
