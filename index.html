@@ -201,14 +201,11 @@ function discountSumForTerm(term,release,firstDue){
 function brFinancedBase(principal,term,coverage,association){
  const normalBase=principal*(1+ADM)+association;
 
- // BR Garantias 80% — regra validada contra o sistema CMBrasil em 25/09/2026:
- // até 12 parcelas, a TCG usa o próprio prazo; de 13 a 24 parcelas,
- // o sistema considera 1 período adicional de TCG (prazo + 1).
- // Mantemos as demais coberturas sem alteração até validação específica.
- // Períodos de TCG validados contra o sistema CMBrasil:
- // BR 80%: até 12x usa o próprio prazo; de 13x a 24x usa prazo + 1.
+ // Períodos de TCG validados contra o sistema CMBrasil em 16/09/2026:
+ // BR 80%: usa o próprio prazo em toda a faixa de 8x a 24x.
  // BR 100%: usa prazo + 1 em toda a faixa de 8x a 24x.
- const tcgPeriods = coverage===1.00 ? term+1 : ((coverage===0.80 && term>=13) ? term+1 : term);
+ // As regras são mantidas separadas para evitar interferência entre as coberturas.
+ const tcgPeriods = coverage===1.00 ? term+1 : term;
  const q=coverage*BR_TCG_MONTHLY*tcgPeriods;
 
  // BR 80% acima de R$ 15 mil: regra direta previamente validada.
