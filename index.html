@@ -205,16 +205,30 @@ function brFinancedBase(principal,term,coverage,association){
  // até 12 parcelas, a TCG usa o próprio prazo; de 13 a 24 parcelas,
  // o sistema considera 1 período adicional de TCG (prazo + 1).
  // Mantemos as demais coberturas sem alteração até validação específica.
- const tcgPeriods=(coverage===0.80 && term>=13) ? term+1 : term;
+ // Períodos de TCG validados contra o sistema CMBrasil:
+ // BR 80%: até 12x usa o próprio prazo; de 13x a 24x usa prazo + 1.
+ // BR 100%: usa prazo + 1 em toda a faixa de 8x a 24x.
+ const tcgPeriods = coverage===1.00 ? term+1 : ((coverage===0.80 && term>=13) ? term+1 : term);
  const q=coverage*BR_TCG_MONTHLY*tcgPeriods;
 
- // Regra previamente validada:
- // 80% e VH acima de R$ 15 mil: TCG direta sobre VH (+ associação, quando houver).
+ // BR 80% acima de R$ 15 mil: regra direta previamente validada.
  if(coverage===0.80 && principal>15000){
    const tcgBase=principal+association;
    const tcg=tcgBase*q;
    return {financed:normalBase+tcg,tcg};
  }
+
+ // BR 100%: calibração validada em 16/09/2026 contra o CMBrasil.
+ // O principal + ADM entra na base circular do TCG. A associação possui
+ // tratamento próprio no sistema e não deve ser lançada integralmente na mesma base circular.
+ if(coverage===1.00){
+   const principalBase=principal*(1+ADM);
+   const principalFinanced=principalBase/(1-q);
+   const associationFinanced=association*(0.918+q);
+   const financed=principalFinanced+associationFinanced;
+   return {financed,tcg:financed-normalBase};
+ }
+
  const financed=normalBase/(1-q);
  return {financed,tcg:financed-normalBase};
 }
