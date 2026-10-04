@@ -1,20 +1,12 @@
 {
-  "name": "J.E Microcrédito - Simulador",
-  "short_name": "J.E Microcrédito",
-  "description": "Simulador comercial de crédito J.E Microcrédito",
+  "name": "J.E. CRED - Simulador de Crédito",
+  "short_name": "J.E. CRED",
+  "description": "Simulador comercial de crédito J.E. CRED",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "orientation": "portrait-primary",
   "background_color": "#0d0d0f",
   "theme_color": "#0d0d0f",
   "lang": "pt-BR",
-"icons": [
-  {
-    "src": "./icon.svg",
-    "sizes": "any",
-    "type": "image/svg+xml",
-    "purpose": "any maskable"
-  }
-]
+  "icons": [{"src":"./icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
 }
